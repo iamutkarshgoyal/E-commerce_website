@@ -40,3 +40,73 @@
 .search-input {
   width: 400px;  /* increase as needed */
 }
+
+.top-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, #ffe6b3, #ffd480);
+  padding: 40px;
+  border-radius: 15px;
+  margin: 30px auto;
+  width: 90%;
+}
+
+.top-banner-content {
+  max-width: 50%;
+  text-align: left;
+}
+
+.shop-now-btn {
+  background-color: #ff5e00;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.shop-now-btn:hover {
+  background-color: #ff8c1a;
+}
+
+.Limited_Time {
+  color: red;
+  font-weight: bold;
+}
+
+.product-card {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.Newsletter-card {
+  text-align: center;
+  margin: 50px 0;
+}
+
+.Newsletter-card input {
+  padding: 10px;
+  width: 250px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.Newsletter-card button {
+  padding: 10px 20px;
+  background-color: #ff5e00;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
