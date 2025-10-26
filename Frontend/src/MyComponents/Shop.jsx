@@ -1,35 +1,59 @@
 import React, { useState, useEffect } from "react";
-import ProductCard from "./Product Card"; // ✅ Make sure name matches your file
+import ProductCard from "./Product Card"; // ✅ Ensure filename matches
 
 const Shop = ({ gender }) => {
   const [products, setProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const productsPerPage = 20;
 
-  // ✅ Fetch products when gender or page changes
+  // ✅ Fetch products whenever gender or page changes
   useEffect(() => {
-    const skip = (currentPage - 1) * productsPerPage;
-    const url = `http://localhost:8000/products/?skip=${skip}&limit=${productsPerPage}&gender=${gender}`;
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError("");
 
-    fetch(url)
-      .then((res) => {
+      const skip = (currentPage - 1) * productsPerPage;
+      const url = `http://localhost:8000/products/?skip=${skip}&limit=${productsPerPage}&gender=${gender}`;
+
+      try {
+        const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
+
+        const data = await res.json();
         console.log("✅ Products fetched:", data);
+
         setProducts(data.data || []);
         setTotalPages(data.pages || 1);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("❌ Error fetching products:", err);
-      });
+        setError("Failed to load products. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
   }, [gender, currentPage]);
+
+  // ✅ Reset to page 1 when gender changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [gender]);
 
   const handlePageChange = (event) => {
     setCurrentPage(Number(event.target.value));
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
 
   return (
@@ -37,19 +61,31 @@ const Shop = ({ gender }) => {
       <div className="shop-container">
         <h1 className="shop-title">{gender} Collection</h1>
 
-        <div className="product-list">
-          {products.length > 0 ? (
-            products.map((product) => (
+        {loading ? (
+          <p>Loading products...</p>
+        ) : error ? (
+          <p className="error-message">{error}</p>
+        ) : products.length > 0 ? (
+          <div className="product-list">
+            {products.map((product) => (
               <ProductCard key={product.id} {...product} />
-            ))
-          ) : (
-            <p>No products found for {gender}.</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p>No products found for {gender}.</p>
+        )}
 
-        {/* 🧭 Pagination Dropdown */}
+        {/* 🧭 Pagination Controls */}
         {totalPages > 1 && (
           <div className="pagination-container">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="pagination-btn"
+            >
+              ⬅ Prev
+            </button>
+
             <label htmlFor="page-select">Page:</label>
             <select
               id="page-select"
@@ -62,15 +98,21 @@ const Shop = ({ gender }) => {
                 </option>
               ))}
             </select>
-            <span>
-              &nbsp;of {totalPages}
-            </span>
+
+            <span>&nbsp;of {totalPages}</span>
+
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="pagination-btn"
+            >
+              Next ➡
+            </button>
           </div>
         )}
       </div>
 
-      {/* 💅 Styles */}
-       <style>{`
+        <style>{`
         .top-banner {
           position: relative;
           display: flex;
@@ -260,7 +302,7 @@ const Shop = ({ gender }) => {
             gap: 25px;
           }
         `}</style>
-    </>
+        </>
   );
 };
 
