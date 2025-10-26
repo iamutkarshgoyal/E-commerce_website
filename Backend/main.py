@@ -1,21 +1,16 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 import pandas as pd
-import os
-import boto3
 import math
-from dotenv import load_dotenv
+from jose import jwt
+import models
+from database import *
+from schemas import *
+from sqlalchemy.orm import Session
 
-load_dotenv()
-
-s3 = boto3.client('s3', 
-                  aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"), 
-                  aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-                  region_name=os.getenv("AWS_REGION")
-) 
-bucket_name = 's3-clothing-brand-images'
 app = FastAPI()
+models.Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,46 +20,68 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-engine = create_engine(os.getenv("DATABASE_URL"))
 
-@app.get("/top_products/")
-async def get_top_products():
+@app.get("/top_products/", response_model=list[TopProductResponse])
+def get_top_products(db: Session = Depends(get_db)):
     try:
-        query = text('SELECT * FROM public."TOP_PRODUCT_TABLE"')
-        df = pd.read_sql(query, engine)
-        df["s3_image_url"] = None
-        if df.empty:
+        products = db.query(models.Top_products).all()
+        if not products:
             raise HTTPException(status_code=404, detail="No top products found")
-        for item in df["id"]:
-            df.loc[df["id"]==item, "s3_image_url"] = s3.generate_presigned_url(
-                                        'get_object', 
-                                        Params={'Bucket': bucket_name, 'Key': str('images/') + str(item) + str('.jpg')},
-                                        ExpiresIn=360000)
-        records = df.to_dict(orient="records")
+        result = []
+        for p in products:
+            image_url = s3.generate_presigned_url(
+                'get_object',
+                Params={'Bucket': "s3-clothing-brand-images", 'Key': f'images/{p.id}.jpg'}, ExpiresIn=360000)
+            
+            result.append({
+                    "id": p.id,
+                    "productDisplayName": p.productDisplayName,
+                    "gender": p.gender,
+                    "s3_image_url": image_url,
+                    "masterCategory": p.masterCategory,
+                    "articleType": p.articleType,
+                    "baseColour": p.baseColour,
+                    "year": p.year,
+                    "season": p.season,
+                    "subCategory": p.subCategory})
 
-        return records
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/popular_products/")
-async def get_popular_products():
+@app.get("/popular_products/", response_model=list[PopularProductResponse])
+async def get_top_products(db: Session = Depends(get_db)):
     try:
-        query = text('SELECT * FROM public."POPULAR_PRODUCT_TABLE"')
-        df = pd.read_sql(query, engine)
-        df["s3_image_url"] = None  
-        if df.empty:
+        products = db.query(models.Popular_products).all()
+        if not products:
             raise HTTPException(status_code=404, detail="No popular products found")
-        for item in df["id"]:
-            df.loc[df["id"]==item, "s3_image_url"] = s3.generate_presigned_url(
-                                        'get_object', 
-                                        Params={'Bucket': bucket_name, 'Key': str('images/') + str(item) + str('.jpg')},
-                                        ExpiresIn=360000)
-        records = df.to_dict(orient="records")
-        return records
-    
+        result = []
+        try:
+            for p in products:
+                image_url = s3.generate_presigned_url(
+                    'get_object',
+                    Params={'Bucket': "s3-clothing-brand-images", 'Key': f'images/{p.id}.jpg'}, ExpiresIn=360000)
+
+                result.append({
+                    "id": p.id,
+                    "productDisplayName": p.productDisplayName,
+                    "gender": p.gender,
+                    "s3_image_url": image_url,
+                    "masterCategory": p.masterCategory,
+                    "articleType": p.articleType,
+                    "baseColour": p.baseColour,
+                    "year": p.year,
+                    "season": p.season,
+                    "subCategory": p.subCategory})
+                
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="Not able to load s3 url")
+
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
     
 @app.get("/products/")
 async def get_products(skip: int = 0, limit: int = 20, gender: str = None):
@@ -85,15 +102,13 @@ async def get_products(skip: int = 0, limit: int = 20, gender: str = None):
         # Fetch paginated data
         params.update({"limit": limit, "skip": skip})
         result = conn.execute(data_query, params)
-        data = [dict(row) for row in result.mappings().all()]  # ✅ convert to dict
-
-    # Add presigned S3 URL for each item
+        data = [dict(row) for row in result.mappings().all()] 
     for item in data:
         try:
             item_id = item["id"]
             item["s3_image_url"] = s3.generate_presigned_url(
                 'get_object',
-                Params={'Bucket': bucket_name, 'Key': f'images/{item_id}.jpg'},
+                Params={'Bucket': "s3-clothing-brand-images", 'Key': f'images/{item_id}.jpg'},
                 ExpiresIn=3600
             )
         except Exception as e:
@@ -118,9 +133,34 @@ async def get_popular_products(id:int):
         for item in df["id"]:
             df.loc[df["id"]==item, "s3_image_url"] = s3.generate_presigned_url(
                                         'get_object', 
-                                        Params={'Bucket': bucket_name, 'Key': str('images/') + str(item) + str('.jpg')},
+                                        Params={'Bucket': "s3-clothing-brand-images", 'Key': str('images/') + str(item) + str('.jpg')},
                                         ExpiresIn=360000)
         records = df.to_dict(orient="records")
         return records
     except:
         raise HTTPException(status_code=500, detail="Internal Server Error")
+    
+
+@app.post("/signup/")
+def signup(user: models.UserCreate, db: Session = Depends(get_db)):
+    existing_user = db.query(models.User).filter(models.User.mobile_no == user.mobile).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
+
+    hashed_pw = pwd_context.hash(user.password)
+    new_user = models.User(mobile=user.mobile, email=user.email, 
+                           password=hashed_pw, firstName=user.firstName, 
+                           lastName=user.lastName)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"message": "User created successfully"}
+
+@app.post("/login/")
+def login(user: models.UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.username == user.username).first()
+    if not db_user or not pwd_context.verify(user.password, db_user.password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    token = jwt.encode({"sub": db_user.username}, SECRET_KEY, algorithm=ALGORITHM)
+    return {"access_token": token, "token_type": "bearer"}
