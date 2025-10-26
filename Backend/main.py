@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import text
+from sqlalchemy import text, func
 import pandas as pd
 import math
 from jose import jwt
@@ -22,7 +22,7 @@ app.add_middleware(
 
 
 @app.get("/top_products/", response_model=list[TopProductResponse])
-def get_top_products(db: Session = Depends(get_db)):
+async def get_top_products(db: Session = Depends(get_db)):
     try:
         products = db.query(models.Top_products).all()
         if not products:
@@ -83,43 +83,49 @@ async def get_top_products(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
     
-@app.get("/products/")
-async def get_products(skip: int = 0, limit: int = 20, gender: str = None):
-    base_query = 'FROM public."ALL_DATA_TABLE"'
-    where_clause = ""
-    params = {}
+@app.get("/products/", response_model=ProductListResponse)
+async def get_products(db: Session = Depends(get_db), skip: int = 0, 
+                       limit: int = 20, gender: str = None):
+    try:
+        query = db.query(models.All_products)
+        if gender:
+            query = query.filter(models.All_products.gender == gender)
 
-    if gender:
-        where_clause = " WHERE LOWER(gender) = LOWER(:gender)"
-        params["gender"] = gender
-
-    count_query = text(f"SELECT COUNT(*) {base_query}{where_clause}")
-    data_query = text(f"SELECT * {base_query}{where_clause} LIMIT :limit OFFSET :skip")
-
-    with engine.connect() as conn:
-        # Total count
-        total_count = conn.execute(count_query, params).scalar()
-        # Fetch paginated data
-        params.update({"limit": limit, "skip": skip})
-        result = conn.execute(data_query, params)
-        data = [dict(row) for row in result.mappings().all()] 
-    for item in data:
+        total_products = query.count()
+        products = query.offset(skip).limit(limit).all()
+        if not products:
+            raise HTTPException(status_code=404, detail="No products found")
+        result = []
         try:
-            item_id = item["id"]
-            item["s3_image_url"] = s3.generate_presigned_url(
-                'get_object',
-                Params={'Bucket': "s3-clothing-brand-images", 'Key': f'images/{item_id}.jpg'},
-                ExpiresIn=3600
-            )
-        except Exception as e:
-            item["s3_image_url"] = None
-            print(f"❌ Could not generate presigned URL for ID {item_id}: {e}")
+            for p in products:
+                image_url = s3.generate_presigned_url(
+                    'get_object',
+                    Params={'Bucket': "s3-clothing-brand-images", 
+                            'Key': f'images/{p.id}.jpg'}, ExpiresIn=360000)
 
-    return {
-        "total": total_count,
-        "pages": math.ceil(total_count / limit) if total_count else 1,
-        "data": data
-    }
+                result.append({
+                    "id": p.id,
+                    "productDisplayName": p.productDisplayName,
+                    "gender": p.gender,
+                    "s3_image_url": image_url,
+                    "masterCategory": p.masterCategory,
+                    "articleType": p.articleType,
+                    "baseColour": p.baseColour,
+                    "year": p.year,
+                    "season": p.season,
+                    "subCategory": p.subCategory})
+                
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="Not able to load s3 url")
+        
+        return {
+            "data": result,
+            "total": total_products,
+            "pages": math.ceil(total_products / limit)
+        }
+  
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/products/{id}/")
@@ -147,9 +153,9 @@ def signup(user: models.UserCreate, db: Session = Depends(get_db)):
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already exists")
 
-    hashed_pw = pwd_context.hash(user.password)
+    password = (user.password)
     new_user = models.User(mobile=user.mobile, email=user.email, 
-                           password=hashed_pw, firstName=user.firstName, 
+                           password=password, firstName=user.firstName, 
                            lastName=user.lastName)
     db.add(new_user)
     db.commit()
