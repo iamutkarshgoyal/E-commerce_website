@@ -7,12 +7,12 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "USERS"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    mobile_no = Column(Integer, unique=True)
-    email = Column(String(255), unique=True)
+    id = Column(Integer, primary_key=True, index=True)
+    firstname = Column(String)
+    lastname = Column(String)
+    mobile = Column(String, unique=True)
+    email = Column(String)
     password = Column(String)
-    first_name = Column(String(100))
-    last_name = Column(String(100))
 
 
 class Top_products(Base):
@@ -61,7 +61,9 @@ class All_products(Base):
 
 
 class UserCreate(BaseModel):
-    username: str
+    firstname: str
+    lastname: str
+    mobile: str
     email: str
     password: str
 

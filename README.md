@@ -1,63 +1,42 @@
-Clothing Brand E-Commerce Website
-A modern e-commerce platform for clothing that lets users browse by gender, category, and other filters. The backend uses FastAPI; the frontend uses React and integrates AWS S3 for images.
+# Clothing Brand E-Commerce Website
+*Italic A modern e-commerce platform for clothing that lets users browse by gender, category, and other filters. The backend uses FastAPI; the frontend uses React and integrates AWS S3 for images.*
 
-Table of Contents
+## Table of Contents
 
-Features
+### Features
+**Bold Tech Stack **
+**Bold Project Structure **
+**Bold Backend Setup **
+**Bold Frontend Setup **
+**Bold API Endpoints **
+**Bold Future Improvements **
 
-Tech Stack
 
-Project Structure
+## Features
+*Italic Browse products by gender, category, and subcategory.*
+*Italic Pagination support for product listing.*
+*Italic Product images securely served via AWS S3 pre-signed URLs.*
+*Italic User authentication and management (Sign Up / Login / JWT-based).*
+*Italic Responsive and modern frontend design.*
+*Italic Newsletter subscription feature.*
 
-Backend Setup
+## Tech Stack
+*Italic Frontend: React, React Router, Tailwind CSS*
+*Italic Backend: FastAPI, SQLAlchemy, Pydantic*
+*Italic Database: PostgreSQL*
+*Italic Cloud Storage: AWS S3 (for product images)*
+*Italic Authentication: JWT (JSON Web Tokens)*
+*Italic Deployment: Local development & ready for production deployment*
 
-Frontend Setup
-
-API Endpoints
-
-Future Improvements
-
-License
-
-Features
-
-Browse products by gender, category, and subcategory.
-
-Pagination support for product listing.
-
-Product images securely served via AWS S3 pre-signed URLs.
-
-User authentication and management (Sign Up / Login / JWT-based).
-
-Responsive and modern frontend design.
-
-Newsletter subscription feature.
-
-Tech Stack
-
-Frontend: React, React Router, Tailwind CSS
-
-Backend: FastAPI, SQLAlchemy, Pydantic
-
-Database: PostgreSQL
-
-Cloud Storage: AWS S3 (for product images)
-
-Authentication: JWT (JSON Web Tokens)
-
-Deployment: Local development & ready for production deployment
-
-Project Structure
-
-text
+## Project Structure
 clothing-website/
 ├── Backend/
-│   ├── main.py             # FastAPI app
-│   ├── models.py           # SQLAlchemy models
-│   ├── schemas.py          # Pydantic schemas
-│   ├── database.py         # DB connection
-│   ├── crud.py             # CRUD operations
-│   └── requirements.txt    # Backend dependencies
+│   ├── main.py 
+│   ├── models.py 
+│   ├── schemas.py 
+│   ├── database.py 
+│   ├── crud.py  
+│   └── requirements.txt 
 ├── Frontend/
 │   ├── src/
 │   │   ├── components/
@@ -74,69 +53,43 @@ clothing-website/
 └── .gitignore
 Backend Setup
 
-Clone the repository
-
-text
+### Clone the repository
 git clone <repo-url>
 cd clothing-website/Backend
-Create and activate a virtual environment
 
-text
+## Create and activate a virtual environment
+
+### On Windows:
 python -m venv venv
-On macOS/Linux:
-
-text
-source venv/bin/activate
-On Windows:
-
-text
 venv\Scripts\activate
-Install dependencies
 
-text
+### Install dependencies
 pip install -r requirements.txt
-Configure database
 
+### Configure database
 Update database.py with your PostgreSQL credentials.
 
-Run the FastAPI server
-
-text
+### Run the FastAPI server
 uvicorn main:app --reload
 Visit http://localhost:8000/docs for interactive API documentation.
 
-Frontend Setup
-
-Navigate to frontend
-
-text
+## Frontend Setup
+### Navigate to frontend
 cd ../Frontend
-Install dependencies
 
-text
+## Install dependencies
 npm install
-Start development server
 
-text
+## Start development server
 npm start
 Visit http://localhost:3000 in your browser.
 
-API Endpoints
-
+## API Endpoints
 You can view and test all available endpoints using FastAPI’s interactive documentation at /docs when your backend server is running.
 
-Future Improvements
-
-Add product reviews and ratings.
-
-Enhance filtering and search capabilities.
-
-Implement order history and tracking.
-
-Integrate payment gateways for checkout.
-
-Improve admin dashboard functionality.
-
-License
-
-This project is licensed under the MIT License.
+## Future Improvements
+*Italic Add product reviews and ratings.*
+*Italic Enhance filtering and search capabilities.*
+*Italic Implement order history and tracking.*
+*Italic Integrate payment gateways for checkout.*
+*Italic Improve admin dashboard functionality.*

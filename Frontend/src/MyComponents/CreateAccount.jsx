@@ -2,31 +2,35 @@ import React, {useState} from "react";
 import { Link } from "react-router-dom";
 
 const CreateAccount = () => {
-
-    const [isLogin, setIsLogin] = useState(true);
-    const [form, setForm] = useState({ username: "", email: "", password: "" });
+    const [form, setForm] = useState({firstname: "", lastname: "", mobile: "", email: "", password: "" });
 
     const handleChange = (e) => {
-      setForm({ ...form, [e.target.name]: e.target.value });
+      setForm({ ...form, [e.target.name]: e.target.value});
     };
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      const endpoint = isLogin ? "/login/" : "/signup/";
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const endpoint = "/signup/"; // always signup
+    try {
       const res = await fetch(`http://127.0.0.1:8000${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      const data = await res.json().catch(() => ({}));
 
-      const data = await res.json();
       if (res.ok) {
-        alert(isLogin ? "Login successful!" : "Signup successful!");
-        console.log(data);
+        alert("Signup successful!");
+        console.log("✅ Success:", data);
       } else {
         alert(data.detail || "Error occurred");
       }
-    };
+    } catch (error) {
+      console.error("❌ Network error:", error);
+      alert("Network error, please try again later.");
+    }
+  };
 
   return (
     <>
@@ -39,7 +43,7 @@ const CreateAccount = () => {
               Join our community and get exclusive access to deals.
             </p>
 
-            <form onSubmit={handleSubmit}>
+            <form>
               <label>
               {/* Two-column input for first & last name */}
               <div className="name-container mb-3">
@@ -47,8 +51,9 @@ const CreateAccount = () => {
                   type="text"
                   className="form-control"
                   id="firstName"
+                  name="firstname"
                   placeholder="First Name"
-                  onChange={handleChange}
+                  onChange={handleChange} 
                 />
                 </div>
                 </label>
@@ -58,6 +63,7 @@ const CreateAccount = () => {
                   type="text"
                   className="form-control"
                   id="lastName"
+                  name="lastname"
                   placeholder="Last Name"
                   onChange={handleChange}
                 />
@@ -68,7 +74,9 @@ const CreateAccount = () => {
                   type="tel"
                   className="form-control"
                   id="mobile"
+                  name="mobile"
                   placeholder="Enter your mobile"
+                  onChange={handleChange}
                 />
               </div>
 
@@ -77,7 +85,9 @@ const CreateAccount = () => {
                   type="email"
                   className="form-control"
                   id="email"
+                  name="email"
                   placeholder="John@example.com"
+                  onChange={handleChange}
                 />
               </div>
 
@@ -86,11 +96,13 @@ const CreateAccount = () => {
                   type="password"
                   className="form-control"
                   id="password"
+                  name="password"
                   placeholder="Enter your password"
+                  onChange={handleChange}
                 />
               </div>
 
-              <button type="submit" className="btn btn-primary w-100">
+              <button onClick={handleSubmit} type="submit" className="btn btn-primary w-100">
                 Create Account
               </button>
             </form>
@@ -126,7 +138,8 @@ const CreateAccount = () => {
                   type="text"
                   className="form-control"
                   id="login-username"
-                  placeholder="Enter your username"
+                  name="email"
+                  placeholder="Enter your email"
                 />
               </div>
               <div className="mb-3">
@@ -134,6 +147,7 @@ const CreateAccount = () => {
                   type="password"
                   className="form-control"
                   id="login-password"
+                  name="password"
                   placeholder="Enter your password"
                 />
               </div>

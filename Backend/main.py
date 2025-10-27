@@ -12,9 +12,16 @@ from sqlalchemy.orm import Session
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
+origins = [
+    "http://localhost:3000",  # if you're running React with default port
+    "http://localhost:3001",  # if you're using port 3001
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins="http://localhost:3001",
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -149,18 +156,22 @@ async def get_popular_products(id:int):
 
 @app.post("/signup/")
 def signup(user: models.UserCreate, db: Session = Depends(get_db)):
-    existing_user = db.query(models.User).filter(models.User.mobile_no == user.mobile).first()
+    existing_user = db.query(models.User).filter(models.User.mobile == user.mobile).first()
     if existing_user:
-        raise HTTPException(status_code=400, detail="Username already exists")
+        raise HTTPException(status_code=400, detail="User already exists")
 
-    password = (user.password)
-    new_user = models.User(mobile=user.mobile, email=user.email, 
-                           password=password, firstName=user.firstName, 
-                           lastName=user.lastName)
+    new_user = models.User(
+        firstname=user.firstname,
+        lastname=user.lastname,
+        mobile=user.mobile,
+        email=user.email,
+        password=user.password
+    )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return {"message": "User created successfully"}
+
 
 @app.post("/login/")
 def login(user: models.UserLogin, db: Session = Depends(get_db)):
