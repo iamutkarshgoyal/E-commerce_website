@@ -36,11 +36,11 @@ class PopularProductResponse(BaseModel):
 class UserResponse(BaseModel):
 
     id: int
-    mobile_no: int
+    firstName: str
+    lastName: str
+    mobile: int
     email: str
     password: str
-    first_name: str
-    last_name: str
 
     class Config: {
         "from_attributes": True }
