@@ -135,27 +135,35 @@ async def get_products(db: Session = Depends(get_db), skip: int = 0,
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/products/{id}/")
-async def get_popular_products(id:int):
+@app.get("/products/{id}/", response_model=TopProductResponse)
+async def get_popular_products(id: int, db: Session = Depends(get_db)):
     try:
-        query = text('SELECT * FROM public."ALL_DATA_TABLE" WHERE id = :id')
-        df = pd.read_sql(query, engine, params={"id": id})
-        df["s3_image_url"] = None  
-        if df.empty:
-            raise HTTPException(status_code=404, detail="No products found")
-        for item in df["id"]:
-            df.loc[df["id"]==item, "s3_image_url"] = s3.generate_presigned_url(
+        product = db.query(models.All_products).filter(models.All_products.id == id).first()
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        s3_image_url = s3.generate_presigned_url(
                                         'get_object', 
-                                        Params={'Bucket': "s3-clothing-brand-images", 'Key': str('images/') + str(item) + str('.jpg')},
+                                        Params={'Bucket': "s3-clothing-brand-images", 'Key': str('images/') + str(id) + str('.jpg')},
                                         ExpiresIn=360000)
-        records = df.to_dict(orient="records")
-        return records
+        product_data = {
+            "id": product.id,
+            "productDisplayName": product.productDisplayName,
+            "gender": product.gender,
+            "masterCategory": product.masterCategory,
+            "articleType": product.articleType,
+            "baseColour": product.baseColour,
+            "year": product.year,
+            "season": product.season,
+            "subCategory": product.subCategory,
+            "s3_image_url": s3_image_url
+        }
+        return product_data
     except:
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
 
 @app.post("/signup/")
-def signup(user: models.UserCreate, db: Session = Depends(get_db)):
+def signup(user: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(models.User).filter(models.User.mobile == user.mobile).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists")
@@ -174,10 +182,74 @@ def signup(user: models.UserCreate, db: Session = Depends(get_db)):
 
 
 @app.post("/login/")
-def login(user: models.UserLogin, db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.username == user.username).first()
-    if not db_user or not pwd_context.verify(user.password, db_user.password):
+def login(user: UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.mobile == user.mobile).first()
+    if not db_user or not db_user.password == user.password:
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    return {"message": "Login successful"}
 
-    token = jwt.encode({"sub": db_user.username}, SECRET_KEY, algorithm=ALGORITHM)
-    return {"access_token": token, "token_type": "bearer"}
+    # token = jwt.encode({"sub": db_user.username}, SECRET_KEY, algorithm=ALGORITHM)
+    # return {"access_token": token, "token_type": "bearer"}
+
+
+@app.post("/add_product/")
+def add_product(product: AddProduct, db: Session = Depends(get_db)):
+    try:
+        existing_product = db.query(models.All_products).filter(models.All_products.id == product.id).first()
+        if existing_product:
+            raise HTTPException(status_code=400, detail="Product already exists")
+        new_product = models.All_products(
+            id = product.id,
+            productDisplayName = product.productDisplayName,
+            gender = product.gender,
+            masterCategory = product.masterCategory,
+            subCategory = product.subCategory,
+            articleType = product.articleType,
+            baseColour = product.baseColour,
+            season = product.season,
+            year = product.year,
+            usage = product.usage
+        )
+        db.add(new_product)
+        db.commit()
+        db.refresh(new_product)
+        return {"message": "Product added successfully"}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.delete("/delete_product/{id}/")
+def delete_product(id: int, db: Session = Depends(get_db)):
+    try:
+        product_exist = db.query(models.All_products).filter(models.All_products.id == id).first()
+        if not product_exist:
+            raise HTTPException(status_code=404, detail="Product not exist")
+        db.delete(product_exist)
+        db.commit()
+        return {"message": "Product deleted successfully"}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.put("/update_product/")
+def update_product(product: UpdateProduct, db: Session = Depends(get_db)):
+    try:
+        product_exist = db.query(models.All_products).filter(models.All_products.id == product.id).first()
+        if not product_exist:
+            raise HTTPException(status_code=404, detail="Product does not exist")
+
+        update_data = product.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(product_exist, key, value)
+        db.commit()
+        db.refresh(product_exist)
+        return {"message": "Product updated successfully", "updated_product": product_exist.id}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+            
+

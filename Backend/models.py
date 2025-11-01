@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, BIGINT
 from sqlalchemy.ext.declarative import declarative_base
 from pydantic import BaseModel
 
@@ -10,8 +10,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     firstname = Column(String)
     lastname = Column(String)
-    mobile = Column(String, unique=True)
-    email = Column(String)
+    mobile = Column(BIGINT, unique=True)
+    email = Column(String, unique=True)
     password = Column(String)
 
 
@@ -60,14 +60,20 @@ class All_products(Base):
     usage = Column(String)
 
 
-class UserCreate(BaseModel):
-    firstname: str
-    lastname: str
-    mobile: str
-    email: str
-    password: str
-
-
 class UserLogin(BaseModel):
-    username: str
+    mobile: int
     password: str
+
+
+class AddProduct(BaseModel):
+    productDisplayName: str
+    gender: str
+    masterCategory: str
+    subCategory: str
+    articleType: str
+    baseColour: str
+    season: str
+    year: str
+    usage: str
+    s3_image_url: str
+

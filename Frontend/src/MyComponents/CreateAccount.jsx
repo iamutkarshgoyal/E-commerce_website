@@ -1,8 +1,14 @@
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 const CreateAccount = () => {
     const [form, setForm] = useState({firstname: "", lastname: "", mobile: "", email: "", password: "" });
+    const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [showLoginPassword, setShowLoginPassword] = useState(false);
+    const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
       setForm({ ...form, [e.target.name]: e.target.value});
@@ -11,24 +17,24 @@ const CreateAccount = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const endpoint = "/signup/"; // always signup
     try {
-      const res = await fetch(`http://127.0.0.1:8000${endpoint}`, {
+      setLoading(true);
+      const res = await fetch(`http://127.0.0.1:8000/signup/`, {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       const data = await res.json().catch(() => ({}));
+      setMessage(data.message || "Success");
 
-      if (res.ok) {
-        alert("Signup successful!");
-        console.log("✅ Success:", data);
-      } else {
-        alert(data.detail || "Error occurred");
-      }
     } catch (error) {
+      setMessage("Something went wrong");
       console.error("❌ Network error:", error);
-      alert("Network error, please try again later.");
+      setErrors({ network: "Network error. Please try again later." });
+    } finally {
+      console.log("✅ Form submitted successfully");
+      setLoading(false);
     }
   };
 
@@ -93,17 +99,26 @@ const CreateAccount = () => {
 
               <div className="mb-3">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   className="form-control"
                   id="password"
                   name="password"
                   placeholder="Enter your password"
                   onChange={handleChange}
                 />
+                <button
+                  type="button"
+                  className="eye-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
 
-              <button onClick={handleSubmit} type="submit" className="btn btn-primary w-100">
-                Create Account
+              <button onClick={handleSubmit} type="submit" className="btn btn-primary w-100"
+              disabled={loading}
+              >
+                {loading ? "Creating Account..." : "Create Account"}
               </button>
             </form>
 
@@ -142,14 +157,21 @@ const CreateAccount = () => {
                   placeholder="Enter your email"
                 />
               </div>
-              <div className="mb-3">
+              <div className="mb-3 password-wrapper">
                 <input
-                  type="password"
+                  type={showLoginPassword ? "text" : "password"}
                   className="form-control"
                   id="login-password"
                   name="password"
                   placeholder="Enter your password"
                 />
+                <button
+                  type="button"
+                  className="eye-btn"
+                  onClick={() => setShowLoginPassword(!showLoginPassword)}
+                >
+                  {showLoginPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
 
               <div className="mb-3 form-check">
@@ -362,6 +384,25 @@ const CreateAccount = () => {
           .name-container {
             flex-direction: column;
           }
+        }
+
+        .password-wrapper {
+          position: relative;
+        }
+
+        .eye-btn {
+          position: absolute;
+          top: 50%;
+          right: 12px;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #555;
+        }
+
+        .eye-btn:hover {
+          color: #007bff;
         }
         `}
       </style>
