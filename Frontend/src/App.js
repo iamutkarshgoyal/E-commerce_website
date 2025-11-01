@@ -16,7 +16,8 @@ import { WishlistProvider } from "./MyComponents/Wishlist";
 import ProductCard from './MyComponents/Product Card';
 import Shop from './MyComponents/Shop';
 import Shopcontext from './context/Shopcontext';
-import CreateAccount from './MyComponents/CreateAccount';
+import Signup from './MyComponents/SignUp';
+import Login from './MyComponents/Login';
 import Item from './MyComponents/Item';
 
 
@@ -41,7 +42,8 @@ function App() {
         <Route path="/Wishlist" element={<WishlistProvider />} />
         <Route path="/ProductCard" element={<ProductCard />} />
         <Route path="/Shop/:categoryName" element={<Shopcontext />} />
-        <Route path="/createaccount" element={<CreateAccount />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/products" element={<Item />} >
           <Route path=':id' element={<Item/>}/>
         </Route>
