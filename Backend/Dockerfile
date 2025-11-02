@@ -1,15 +1,11 @@
-FROM python:3.12
+FROM python:3.12-slim
 
 WORKDIR /my_project/Backend
 
 COPY requirement.txt ./
-
-RUN pip install -r requirement.txt
+RUN pip install --no-cache-dir -r requirement.txt
 
 COPY . .
-COPY . .
-
-RUN uvicorn main:app
 
 EXPOSE 8000
 
