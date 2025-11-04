@@ -3,23 +3,25 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {CartProvider} from './context/CartContext';
-import Header from './MyComponents/Headers';
-import Footer from './MyComponents/Footer';
-import Home from './MyComponents/Home';
-import About from './MyComponents/About';
-import MyCart from "./MyComponents/MyCart";
-import MyProfile from './MyComponents/MyProfile';
-import MyAddresses from './MyComponents/MyAddresses';
-import MyOrders from './MyComponents/MyOrders';
-import MyPayments from './MyComponents/MyPayments';
-import { WishlistProvider } from "./MyComponents/Wishlist";
-import ProductCard from './MyComponents/Product Card';
-import Shop from './MyComponents/Shop';
+import Header from './MyComponents/pageDesign/Headers';
+import Footer from './MyComponents/pageDesign/Footer';
+import Home from './MyComponents/productPages/Home';
+import About from './MyComponents/pageDesign/About';
+import MyCart from "./MyComponents/userPage/MyCart";
+import MyProfile from './MyComponents//userPage/MyProfile';
+import MyAddresses from './MyComponents/userPage/MyAddresses';
+import MyOrders from './MyComponents/userPage/MyOrders';
+import MyPayments from './MyComponents/userPage/MyPayments';
+import { WishlistProvider } from "./MyComponents/userPage/Wishlist";
+import ProductCard from './MyComponents/productPages/Product Card';
+import Shop from './MyComponents/productPages/Shop';
 import Shopcontext from './context/Shopcontext';
-import Signup from './MyComponents/SignUp';
-import Login from './MyComponents/Login';
-import Item from './MyComponents/Item';
-
+import Signup from './MyComponents/loginPage/SignUp';
+import Login from './MyComponents/loginPage/Login';
+import Item from './MyComponents/productPages/Item';
+import ProductAdd from './MyComponents/dataProduct/productAdd';
+import ProductDelete from './MyComponents/dataProduct/productDelete';
+import ProductUpdate from './MyComponents/dataProduct/updateProduct';
 
 function App() {
   return (
@@ -45,8 +47,10 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/products" element={<Item />} >
-          <Route path=':id' element={<Item/>}/>
-        </Route>
+        <Route path=':id' element={<Item/>}/> </Route>
+        <Route path="/add_product" element={<ProductAdd />} />
+        <Route path="/delete_product" element={<ProductDelete />} />
+        <Route path="/update_product" element={<ProductUpdate />} />
 
       </Routes>
 
