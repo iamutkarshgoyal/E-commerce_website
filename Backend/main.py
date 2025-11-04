@@ -50,6 +50,7 @@ async def get_top_products(db: Session = Depends(get_db)):
                     "baseColour": p.baseColour,
                     "year": p.year,
                     "season": p.season,
+                    "usage": p.usage,
                     "subCategory": p.subCategory})
 
         return result
@@ -80,6 +81,7 @@ async def get_top_products(db: Session = Depends(get_db)):
                     "baseColour": p.baseColour,
                     "year": p.year,
                     "season": p.season,
+                    "usage": p.usage,
                     "subCategory": p.subCategory})
                 
         except Exception as e:
@@ -155,6 +157,7 @@ async def get_popular_products(id: int, db: Session = Depends(get_db)):
             "year": product.year,
             "season": product.season,
             "subCategory": product.subCategory,
+            "usage": product.usage,
             "s3_image_url": s3_image_url
         }
         return product_data
@@ -163,7 +166,7 @@ async def get_popular_products(id: int, db: Session = Depends(get_db)):
     
 
 @app.post("/signup/")
-def signup(user: UserCreate, db: Session = Depends(get_db)):
+async def signup(user: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(models.User).filter(models.User.mobile == user.mobile).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists")
@@ -182,7 +185,7 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @app.post("/login/")
-def login(user: UserLogin, db: Session = Depends(get_db)):
+async def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.mobile == user.mobile).first()
     if not db_user or not db_user.password == user.password:
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -194,7 +197,7 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
 
 
 @app.post("/add_product/")
-def add_product(product: AddProduct, db: Session = Depends(get_db)):
+async def add_product(product: AddProduct, db: Session = Depends(get_db)):
     try:
         existing_product = db.query(models.All_products).filter(models.All_products.id == product.id).first()
         if existing_product:
@@ -221,7 +224,7 @@ def add_product(product: AddProduct, db: Session = Depends(get_db)):
     
 
 @app.delete("/delete_product/{id}/")
-def delete_product(id: int, db: Session = Depends(get_db)):
+async def delete_product(id: int, db: Session = Depends(get_db)):
     try:
         product_exist = db.query(models.All_products).filter(models.All_products.id == id).first()
         if not product_exist:
@@ -234,14 +237,15 @@ def delete_product(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
     
 
-@app.put("/update_product/")
-def update_product(product: UpdateProduct, db: Session = Depends(get_db)):
+@app.put("/update_product/{id}/")
+async def update_product(id:int, product: UpdateProduct, db: Session = Depends(get_db)):
     try:
-        product_exist = db.query(models.All_products).filter(models.All_products.id == product.id).first()
+        product_exist = db.query(models.All_products).filter(models.All_products.id == id).first()
         if not product_exist:
             raise HTTPException(status_code=404, detail="Product does not exist")
-
+        
         update_data = product.model_dump(exclude_unset=True)
+        update_data.pop("id", None)
         for key, value in update_data.items():
             setattr(product_exist, key, value)
         db.commit()

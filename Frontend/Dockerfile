@@ -1,18 +1,13 @@
-FROM node:22-alpine
+FROM node:18
 
-WORKDIR /my_project/Frontend
+WORKDIR /app
 
 COPY package*.json ./
+RUN npm install
 
-RUN npm install 
+COPY . .
 
-COPY ./src ./src
-COPY ./public ./public
-
-RUN npm run build
-
-RUN npm install -g serve@latest
-
+ENV HOST=0.0.0.0
 EXPOSE 3000
 
-CMD [ "serve", "-s", "build" ]
+CMD ["npm", "start"]
