@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Union
 
 class TopProductResponse(BaseModel):
     id: int
@@ -10,6 +10,7 @@ class TopProductResponse(BaseModel):
     baseColour: str
     year: int
     season: str
+    usage: str
     subCategory: str
     s3_image_url: str = None
 
@@ -28,6 +29,7 @@ class PopularProductResponse(BaseModel):
     season: str
     subCategory: str
     s3_image_url: str
+    usage: str
 
     class Config: {
         "from_attributes": True }
@@ -52,6 +54,7 @@ class AllProductResponse(BaseModel):
     year: Optional[int] = None
     season: Optional[str] = None
     subCategory: Optional[str] = None
+    usage: Optional[str] = None
 
     model_config = {
         "from_attributes": True
@@ -82,15 +85,14 @@ class AddProduct(BaseModel):
 
 
 class UpdateProduct(BaseModel):
-    id: int
     productDisplayName: Optional[str]
     gender: Optional[str]
     masterCategory: Optional[str]
     subCategory: Optional[str]
     articleType: Optional[str]
-    baseColour: Optional[str]
+    baseColour: Optional[Union[str, int]]
     season: Optional[str]
-    year: Optional[str]
+    year: Optional[int]
     usage: Optional[str]
 
     model_config = {
