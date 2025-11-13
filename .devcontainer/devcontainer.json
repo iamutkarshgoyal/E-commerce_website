@@ -1,18 +1,20 @@
 {
-  "name": "Ecommerce Dev Container",
+  "name": "My Website Dev Environment",
   "dockerComposeFile": "../docker-compose.yml",
-  "service": "backend",
-  "workspaceFolder": "/my_project",
-  "remoteUser": "root",
-
-  "features": {
-    "ghcr.io/devcontainers/features/python:1": {},
-    "ghcr.io/devcontainers/features/node:1": {}
+  "service": "backend", 
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "pip install -r Backend/requirement.txt && npm install --prefix Frontend",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
   },
-
-  "postCreateCommand": "pip install -r Backend/requirement.txt",
-
-  "forwardPorts": [8000, 3000],
-  "runServices": ["backend", "frontend"],  // 👈 make sure this line exists
-  "shutdownAction": "stopCompose"
+  "postStartCommand": "uvicorn Backend.main:app --reload & npm run dev --prefix Frontend"
 }
