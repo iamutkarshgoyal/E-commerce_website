@@ -1,44 +1,61 @@
-import sqlalchemy as sa
-from sqlalchemy.orm import declarative_base, sessionmaker
+import pandas as pd
+import ast
 import os
+import requests
+from sqlalchemy import create_engine
 from dotenv import load_dotenv
-
 
 load_dotenv()
 
-engine = sa.create_engine(os.getenv("DATABASE_URL"))
-Session = sessionmaker(bind=engine)
-Base = declarative_base()
+engine = create_engine(os.getenv("DATABASE_URL"))
+df = pd.read_csv("./Backend/data.csv")
+
+df["product_images"] = df[" product_images"].apply(
+    lambda x: ast.literal_eval(x) if isinstance(x, str) else x
+)
+
+IMAGE_DIR = "downloaded_images"
+os.makedirs(IMAGE_DIR, exist_ok=True)
 
 
-class Top_product(Base):
-    __tablename__ = "TOP_PRODUCT_TABLE"
-    id = sa.Column(sa.Integer, primary_key=True, index=True, autoincrement=True)
-    productDisplayName = sa.Column(sa.String)
-    gender = sa.Column(sa.String)
-    masterCategory = sa.Column(sa.String)
-    subCategory = sa.Column(sa.String)
-    articleType = sa.Column(sa.String)
-    baseColour = sa.Column(sa.String)
-    season = sa.Column(sa.String)
-    year = sa.Column(sa.String)
+def safe_name(name):
+    return name.strip().replace(" ", "_").replace("/", "_")
 
+def download_images_and_count(row):
+    product = safe_name(row["product_name"])
+    images = row["product_images"]
 
-    def __repr__(self):
-        return f"<Top_product(productDisplayName='{self.productDisplayName}', gender='{self.gender}', masterCategory='{self.masterCategory}', subCategory='{self.subCategory}', articleType='{self.articleType}', baseColour='{self.baseColour}', season='{self.season}', year='{self.year})>"
+    success_count = 0
+    downloaded_files = []
 
+    for img in images:
+        url = list(img.keys())[0]
+        file_name = f"{product}_{success_count + 1}.jpg"
+        file_path = os.path.join(IMAGE_DIR, file_name)
 
-def main():
-    Base.metadata.create_all(bind=engine)
-    data = Top_product(productDisplayName="test", gender="test", 
-                       masterCategory="test", subCategory="test", articleType="test", 
-                       baseColour="test", season="test", year=2000)
+        try:
+            r = requests.get(url, timeout=15)
+            r.raise_for_status()
 
-    with Session() as session:
-        session.add(data)
-        session.commit()
-        print("User created successfully")
+            with open(file_path, "wb") as f:
+                f.write(r.content)
 
+            success_count += 1
+            downloaded_files.append(file_path)
 
-if __name__ == "__main__":
-    main()
+        except Exception:
+            continue  # ❌ skip failed image
+
+    return success_count
+
+df["total_images"] = df.apply(download_images_and_count, axis=1)
+
+# ❌ Drop only rows where ALL images failed
+df = df[df["total_images"] > 0].reset_index(drop=True)
+df.drop(columns=[" product_images", "link", "product_images"], inplace=True)
+df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+df["price"].replace("â‚¹ ", "", regex=True, inplace=True)
+df["price"] = df["price"].str.replace(",", "")
+print(df.head())
+print(df.shape)
+df.to_sql("ZARA_PRODUCTS", con=engine, if_exists="replace", index=False)

@@ -24,7 +24,7 @@ export default function Header() {
             <li className="nav-item">
               <Link className="nav-link" to="/Menwear">Men</Link>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <Link className="nav-link" to="/Womenwear">Woman</Link>
             </li>
             <li className="nav-item">
@@ -32,13 +32,13 @@ export default function Header() {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/Unisexwear">Unisex</Link>
-            </li>
+            </li> */}
             <li className="nav-item">
               <Link className="nav-link" to="/about">About Us</Link>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <Link className="nav-link" to="/delete_product">Delete Product</Link>
-            </li>
+            </li> */}
           </ul>
 
           {/* Center Search Bar */}

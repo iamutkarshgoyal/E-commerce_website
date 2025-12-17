@@ -2,16 +2,12 @@ import React, { useState } from "react";
 
 const ProductAdd = () => {
   const [addProduct, setAddProduct] = useState({
-    id: "",
-    productDisplayName: "",
+    id:  "",
+    product_name: "",
     gender: "",
-    articleType: "",
-    baseColour: "",
-    masterCategory: "",
-    subCategory: "",
-    season: "",
-    year: "",
-    usage: "",
+    price: "",
+    details: "",
+    total_images: ""
   });
 
   const [loading, setLoading] = useState(false);
@@ -30,7 +26,7 @@ const ProductAdd = () => {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:8000/add_product/", {
+      const response = await fetch(`http://localhost:8000/add_product/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(addProduct),
@@ -42,16 +38,12 @@ const ProductAdd = () => {
       console.log("✅ Product added successfully:", data);
 
       setAddProduct({
-        id: "",
-        productDisplayName: "",
+        id:  "",
+        product_name: "",
         gender: "",
-        articleType: "",
-        baseColour: "",
-        masterCategory: "",
-        subCategory: "",
-        season: "",
-        year: "",
-        usage: "",
+        price: "",
+        details: "",
+        total_images: ""
       });
     } catch (err) {
       console.error("❌ Error adding product:", err);

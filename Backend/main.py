@@ -36,22 +36,20 @@ async def get_top_products(db: Session = Depends(get_db)):
             raise HTTPException(status_code=404, detail="No top products found")
         result = []
         for p in products:
+            safe_name = p.product_name.replace(" ", "_")
             image_url = s3.generate_presigned_url(
                 'get_object',
-                Params={'Bucket': "s3-clothing-brand-images", 'Key': f'images/{p.id}.jpg'}, ExpiresIn=360000)
-            
+                Params={'Bucket': "e-commerce-product-images-bucket", 'Key': f'images/{safe_name}_1.jpg'}, ExpiresIn=360000)
+
             result.append({
                     "id": p.id,
-                    "productDisplayName": p.productDisplayName,
+                    "product_name": p.product_name,
                     "gender": p.gender,
-                    "s3_image_url": image_url,
-                    "masterCategory": p.masterCategory,
-                    "articleType": p.articleType,
-                    "baseColour": p.baseColour,
-                    "year": p.year,
-                    "season": p.season,
-                    "usage": p.usage,
-                    "subCategory": p.subCategory})
+                    "price": p.price,
+                    "details": p.details,
+                    "total_images": p.total_images,
+                    "s3_image_url": image_url
+                    })
 
         return result
     except Exception as e:
@@ -67,22 +65,20 @@ async def get_top_products(db: Session = Depends(get_db)):
         result = []
         try:
             for p in products:
+                safe_name = p.product_name.replace(" ", "_")
                 image_url = s3.generate_presigned_url(
                     'get_object',
-                    Params={'Bucket': "s3-clothing-brand-images", 'Key': f'images/{p.id}.jpg'}, ExpiresIn=360000)
+                    Params={'Bucket': "e-commerce-product-images-bucket", 'Key': f'images/{safe_name}_1.jpg'}, ExpiresIn=360000)
 
                 result.append({
                     "id": p.id,
-                    "productDisplayName": p.productDisplayName,
+                    "product_name": p.product_name,
                     "gender": p.gender,
-                    "s3_image_url": image_url,
-                    "masterCategory": p.masterCategory,
-                    "articleType": p.articleType,
-                    "baseColour": p.baseColour,
-                    "year": p.year,
-                    "season": p.season,
-                    "usage": p.usage,
-                    "subCategory": p.subCategory})
+                    "price": p.price,
+                    "details": p.details,
+                    "total_images": p.total_images,
+                    "s3_image_url": image_url
+                    })
                 
         except Exception as e:
             raise HTTPException(status_code=500, detail="Not able to load s3 url")
@@ -107,22 +103,21 @@ async def get_products(db: Session = Depends(get_db), skip: int = 0,
         result = []
         try:
             for p in products:
+                safe_name = p.product_name.replace(" ", "_")
                 image_url = s3.generate_presigned_url(
                     'get_object',
-                    Params={'Bucket': "s3-clothing-brand-images", 
-                            'Key': f'images/{p.id}.jpg'}, ExpiresIn=360000)
+                    Params={'Bucket': "e-commerce-product-images-bucket",
+                            'Key': f'images/{safe_name}_1.jpg'}, ExpiresIn=360000)
 
                 result.append({
                     "id": p.id,
-                    "productDisplayName": p.productDisplayName,
+                    "product_name": p.product_name,
                     "gender": p.gender,
-                    "s3_image_url": image_url,
-                    "masterCategory": p.masterCategory,
-                    "articleType": p.articleType,
-                    "baseColour": p.baseColour,
-                    "year": p.year,
-                    "season": p.season,
-                    "subCategory": p.subCategory})
+                    "price": p.price,
+                    "details": p.details,
+                    "total_images": p.total_images,
+                    "s3_image_url": image_url
+                    })
                 
         except Exception as e:
             raise HTTPException(status_code=500, detail="Not able to load s3 url")
@@ -143,21 +138,18 @@ async def get_popular_products(id: int, db: Session = Depends(get_db)):
         product = db.query(models.All_products).filter(models.All_products.id == id).first()
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
+        safe_name = product.product_name.replace(" ", "_")
         s3_image_url = s3.generate_presigned_url(
-                                        'get_object', 
-                                        Params={'Bucket': "s3-clothing-brand-images", 'Key': str('images/') + str(id) + str('.jpg')},
-                                        ExpiresIn=360000)
+                                        'get_object',
+                                        Params={'Bucket': "e-commerce-product-images-bucket",
+                                                'Key': f'images/{safe_name}_1.jpg'}, ExpiresIn=360000)
         product_data = {
             "id": product.id,
-            "productDisplayName": product.productDisplayName,
+            "product_name": product.product_name,
             "gender": product.gender,
-            "masterCategory": product.masterCategory,
-            "articleType": product.articleType,
-            "baseColour": product.baseColour,
-            "year": product.year,
-            "season": product.season,
-            "subCategory": product.subCategory,
-            "usage": product.usage,
+            "price": product.price,
+            "details": product.details,
+            "total_images": product.total_images,
             "s3_image_url": s3_image_url
         }
         return product_data
@@ -204,15 +196,11 @@ async def add_product(product: AddProduct, db: Session = Depends(get_db)):
             raise HTTPException(status_code=400, detail="Product already exists")
         new_product = models.All_products(
             id = product.id,
-            productDisplayName = product.productDisplayName,
+            product_name = product.product_name,
             gender = product.gender,
-            masterCategory = product.masterCategory,
-            subCategory = product.subCategory,
-            articleType = product.articleType,
-            baseColour = product.baseColour,
-            season = product.season,
-            year = product.year,
-            usage = product.usage
+            price = product.price,
+            details = product.details,
+            total_images = product.total_images
         )
         db.add(new_product)
         db.commit()

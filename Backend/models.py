@@ -16,48 +16,36 @@ class User(Base):
 
 
 class Top_products(Base):
-    __tablename__ = "TOP_PRODUCT_TABLE"
+    __tablename__ = "NEW_PRODUCT_TABLE"
 
     id = Column(Integer, primary_key=True, index=True)
-    productDisplayName = Column(String)
+    product_name = Column(String)
     gender = Column(String)
-    masterCategory = Column(String)
-    subCategory = Column(String)
-    articleType = Column(String)
-    baseColour = Column(String)
-    season = Column(String)
-    year = Column(String)
-    usage = Column(String)
-    
+    price = Column(String)
+    details = Column(String)
+    total_images = Column(Integer)
+
 
 class Popular_products(Base):
     __tablename__ = "POPULAR_PRODUCT_TABLE"
 
     id = Column(Integer, primary_key=True, index=True)
-    productDisplayName = Column(String)
+    product_name = Column(String)
     gender = Column(String)
-    masterCategory = Column(String)
-    subCategory = Column(String)
-    articleType = Column(String)
-    baseColour = Column(String)
-    season = Column(String)
-    year = Column(String)
-    usage = Column(String)
+    price = Column(String)
+    details = Column(String)
+    total_images = Column(Integer)
 
 
 class All_products(Base):
-    __tablename__ = "ALL_DATA_TABLE"
+    __tablename__ = "ZARA_PRODUCTS"
 
     id = Column(Integer, primary_key=True, index=True)
-    productDisplayName = Column(String)
+    product_name = Column(String)
     gender = Column(String)
-    masterCategory = Column(String)
-    subCategory = Column(String)
-    articleType = Column(String)
-    baseColour = Column(String)
-    season = Column(String)
-    year = Column(String)
-    usage = Column(String)
+    price = Column(String)
+    details = Column(String)
+    total_images = Column(Integer)
 
 
 class UserLogin(BaseModel):
@@ -66,14 +54,12 @@ class UserLogin(BaseModel):
 
 
 class AddProduct(BaseModel):
-    productDisplayName: str
+    id: int
+    product_name: str
     gender: str
-    masterCategory: str
-    subCategory: str
-    articleType: str
-    baseColour: str
-    season: str
-    year: str
-    usage: str
-    s3_image_url: str
+    price: str
+    details: str
+    total_images: int
 
+    class Config: {
+        "from_attributes": True}

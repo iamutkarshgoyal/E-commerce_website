@@ -8,16 +8,16 @@ const ProductCard = (props) => {
         <div className="product-image-gallery">
           <img
             src={props.s3_image_url}
-            alt={props.productDisplayName}
+            alt={props.productName}
             className="product-image"
             loading="lazy"
           />
         </div>
         <div className="product-info">
-          <h3 className="product-name">{props.productDisplayName}</h3>
-          <p className="subcategory">{props.subCategory}</p>
-          <p className="price">{props.articleType}</p>
-          <p className="color">{props.baseColour}</p>
+          <h3 className="product-name">{props.product_name}</h3>
+          <p className="gender">{props.gender}</p>
+          <p className="price">${props.price/1000}k</p>
+          <p className="details">{props.details}</p>
         </div>
       </Link>
     </div>

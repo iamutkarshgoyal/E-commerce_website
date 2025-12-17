@@ -33,9 +33,9 @@ const Home = () => {
       <>
         <div className="top-banner">
           <div className="top-banner-content">
-            <h1>Biggest Diwali Sale</h1>
-            <p>This diwali get upto 80% discount on your favourite outfit.</p>
-            <div className="Limited_Time">*Limited time Diwali offer</div>
+            <h1>Biggest New Year Sale</h1>
+            <p>This New Year get upto 80% discount on your favourite outfit.</p>
+            <div className="Limited_Time">*Limited time New Year offer</div>
             <a href="#top-products" className="shop-now-btn">
               Shop Now
             </a>
