@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "./Product Card"; 
+import API_BASE_URL from "./config";
 
 const Home = () => {
   const [topProducts, settopProducts] = useState([]);
   const [popularProduct, setpopularProducts] = useState([]);
 
 useEffect(() => {
-  fetch("http://localhost:8000/top_products/")
+  fetch(`${API_BASE_URL}/top_products/`)
     .then((response) => response.json())
     .then((data) => {
       console.log("Fetched top products:", data);
@@ -29,7 +30,7 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-  fetch("http://localhost:8000/popular_products/")
+  fetch(`${API_BASE_URL}/popular_products/`)
     .then((response) => response.json())
     .then((data) => {
       console.log("Fetched popular products:", data);
