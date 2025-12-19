@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import ProductCard from "./Product Card";
+import API_BASE_URL from "./config";
 
 const ProductDisplay = () => {
   const { id } = useParams();
@@ -15,7 +16,7 @@ const ProductDisplay = () => {
 
   /* ================= FETCH PRODUCT ================= */
   useEffect(() => {
-    fetch(`http://localhost:8000/products/${id}/`)
+    fetch(`${API_BASE_URL}/products/${id}/`)
       .then((res) => res.json())
       .then(setProduct)
       .catch(() => setError("Product Error"));
@@ -23,7 +24,7 @@ const ProductDisplay = () => {
 
   /* ================= FETCH POPULAR PRODUCTS ================= */
   useEffect(() => {
-    fetch("http://localhost:8000/popular_products/")
+    fetch(`${API_BASE_URL}/popular_products/`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setPopularProducts(data);

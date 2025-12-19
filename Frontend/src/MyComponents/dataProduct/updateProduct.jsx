@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import API_BASE_URL from "./config";
 
 const UpdateProduct = () => {
   const location = useLocation();
@@ -8,13 +9,14 @@ const UpdateProduct = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [updating, setUpdating] = useState(false);
+  
 
   // Fetch product details
   const fetchProduct = async (id) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`http://localhost:8000/products/${id}`);
+      const response = await fetch(`${API_BASE_URL}/products/${id}`);
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const data = await response.json();
       setProductData(Array.isArray(data) ? data[0] : data);
@@ -41,7 +43,7 @@ const UpdateProduct = () => {
         delete cleanData.id; // ✅ backend expects id in URL only
         delete cleanData.s3_image_url;
         console.log("Updating product:", productId, cleanData);
-        const response = await fetch(`http://localhost:8000/update_product/${productId}/`, {
+        const response = await fetch(`${API_BASE_URL}/update_product/${productId}/`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(cleanData),

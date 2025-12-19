@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "./Product Card"; // ✅ Ensure filename matches
+import API_BASE_URL from "./config";
 
 const Shop = ({ gender }) => {
   const [products, setProducts] = useState([]);
@@ -16,7 +17,7 @@ const Shop = ({ gender }) => {
       setError("");
 
       const skip = (currentPage - 1) * productsPerPage;
-      const url = `http://localhost:8000/products/?skip=${skip}&limit=${productsPerPage}&gender=${gender}`;
+      const url = `${API_BASE_URL}/products/?skip=${skip}&limit=${productsPerPage}&gender=${gender}`;
 
       try {
         const res = await fetch(url);

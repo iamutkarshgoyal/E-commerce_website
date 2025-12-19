@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "./config";
 
 const ProductDelete = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const ProductDelete = () => {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:8000/products/${productId}`);
+      const response = await fetch(`${API_BASE_URL}/products/${productId}`);
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       const data = await response.json();
@@ -41,7 +42,7 @@ const ProductDelete = () => {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:8000/delete_product/${productId}`, {
+      const response = await fetch(`${API_BASE_URL}/delete_product/${productId}`, {
         method: "DELETE",
       });
 
