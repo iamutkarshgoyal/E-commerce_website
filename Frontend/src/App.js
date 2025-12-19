@@ -18,7 +18,11 @@ import Shop from './MyComponents/productPages/Shop';
 import Shopcontext from './context/Shopcontext';
 import Signup from './MyComponents/loginPage/SignUp';
 import Login from './MyComponents/loginPage/Login';
+<<<<<<< HEAD
+import ProductDisplay from './MyComponents/productPages/product';
+=======
 import Item from './MyComponents/productPages/Item';
+>>>>>>> cleanup-pycache
 import ProductAdd from './MyComponents/dataProduct/productAdd';
 import ProductDelete from './MyComponents/dataProduct/productDelete';
 import ProductUpdate from './MyComponents/dataProduct/updateProduct';
@@ -46,8 +50,13 @@ function App() {
         <Route path="/Shop/:categoryName" element={<Shopcontext />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+<<<<<<< HEAD
+        <Route path="/products" element={<ProductDisplay />} >
+        <Route path=':id' element={<ProductDisplay/>}/> </Route>
+=======
         <Route path="/products" element={<Item />} >
         <Route path=':id' element={<Item/>}/> </Route>
+>>>>>>> cleanup-pycache
         <Route path="/add_product" element={<ProductAdd />} />
         <Route path="/delete_product" element={<ProductDelete />} />
         <Route path="/update_product" element={<ProductUpdate />} />

@@ -24,7 +24,11 @@ export default function Header() {
             <li className="nav-item">
               <Link className="nav-link" to="/Menwear">Men</Link>
             </li>
+<<<<<<< HEAD
+            {/* <li className="nav-item">
+=======
             <li className="nav-item">
+>>>>>>> cleanup-pycache
               <Link className="nav-link" to="/Womenwear">Woman</Link>
             </li>
             <li className="nav-item">
@@ -32,6 +36,19 @@ export default function Header() {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/Unisexwear">Unisex</Link>
+<<<<<<< HEAD
+            </li> */}
+            <li className="nav-item">
+              <Link className="nav-link" to="/about">About Us</Link>
+            </li>
+            {/* <li className="nav-item">
+              <Link className="nav-link" to="/delete_product">Delete Product</Link>
+            </li> */}
+          </ul>
+
+          {/* Center Search Bar */}
+          {/* <form className="d-flex" role="search">
+=======
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/about">About Us</Link>
@@ -43,6 +60,7 @@ export default function Header() {
 
           {/* Center Search Bar */}
           <form className="d-flex" role="search">
+>>>>>>> cleanup-pycache
             <input
               className="form-control me-2"
               type="search"
@@ -52,7 +70,11 @@ export default function Header() {
             <button className="btn btn-outline-success" type="submit">
               Search
             </button>
+<<<<<<< HEAD
+          </form> */}
+=======
           </form>
+>>>>>>> cleanup-pycache
 
           {/* Right-side links */}
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">

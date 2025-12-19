@@ -1,8 +1,23 @@
 from pydantic import BaseModel
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> cleanup-pycache
 from typing import Optional, List, Union
 
 class TopProductResponse(BaseModel):
     id: int
+<<<<<<< HEAD
+    product_name: str
+    gender : str
+    price : str
+    details : str
+    total_images : int
+    availability: bool
+    images: List[str]
+
+    class Config:{
+=======
     productDisplayName: str
     gender: str
     masterCategory: str
@@ -15,10 +30,24 @@ class TopProductResponse(BaseModel):
     s3_image_url: str = None
 
     class Config: {
+>>>>>>> cleanup-pycache
         "from_attributes": True}
 
 
 class PopularProductResponse(BaseModel):
+<<<<<<< HEAD
+    id : int
+    product_name : str
+    gender : str
+    price : str
+    details : str
+    total_images : int
+    availability: bool
+    images: List[str]
+
+    class Config: {
+        "from_attributes": True}
+=======
     id: int
     productDisplayName: str
     gender: str
@@ -33,6 +62,7 @@ class PopularProductResponse(BaseModel):
 
     class Config: {
         "from_attributes": True }
+>>>>>>> cleanup-pycache
 
 
 class UserCreate(BaseModel):
@@ -44,6 +74,19 @@ class UserCreate(BaseModel):
 
 
 class AllProductResponse(BaseModel):
+<<<<<<< HEAD
+    id : int
+    product_name : str
+    gender : str
+    price : str
+    details : str
+    total_images : int
+    availability: bool
+    images: List[str]
+
+    class Config: {
+        "from_attributes": True}
+=======
     id: int
     productDisplayName: str
     gender: Optional[str] = None
@@ -59,6 +102,7 @@ class AllProductResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+>>>>>>> cleanup-pycache
 
 class ProductListResponse(BaseModel):
     data: List[AllProductResponse]
@@ -72,6 +116,61 @@ class UserLogin(BaseModel):
 
 
 class AddProduct(BaseModel):
+<<<<<<< HEAD
+    id : int
+    product_name : str
+    gender : str
+    price : str
+    details : str
+    total_images : int
+    availability: bool
+
+
+class UpdateProduct(BaseModel):
+    product_name : Optional[str]
+    gender : Optional[str]
+    price : Optional[str]
+    details : Optional[str]
+    total_images : Optional[int]
+    availability: Optional[bool]
+
+    class Config: {
+        "from_attributes": True
+    }
+=======
+
+class TopProductResponse(BaseModel):
+    id: int
+    productDisplayName: str
+    gender: str
+    masterCategory: str
+    articleType: str
+    baseColour: str
+    year: int
+    season: str
+    subCategory: str
+    s3_image_url: str
+
+    class Config:
+        orm_mode = True 
+
+
+class PopularProductResponse(BaseModel):
+    id: int
+    productDisplayName: str
+    gender: str
+    masterCategory: str
+    articleType: str
+    baseColour: str
+    year: int
+    season: str
+    subCategory: str
+    s3_image_url: str
+
+    class Config:
+        orm_mode = True 
+>>>>>>> 68298c400 (Added optimized fastapi backend and orm)
+=======
     id: int
     productDisplayName: str
     gender: str
@@ -98,3 +197,4 @@ class UpdateProduct(BaseModel):
     model_config = {
         "from_attributes": True
     }
+>>>>>>> cleanup-pycache

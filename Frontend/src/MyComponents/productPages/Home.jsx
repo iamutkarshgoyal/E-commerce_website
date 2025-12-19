@@ -5,6 +5,53 @@ const Home = () => {
   const [topProducts, settopProducts] = useState([]);
   const [popularProduct, setpopularProducts] = useState([]);
 
+<<<<<<< HEAD
+useEffect(() => {
+  fetch("http://localhost:8000/top_products/")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Fetched top products:", data);
+
+      // ✅ Normalize response
+      if (Array.isArray(data)) {
+        settopProducts(data);
+      } else if (Array.isArray(data.top_products)) {
+        settopProducts(data.top_products);
+      } else if (Array.isArray(data.data)) {
+        settopProducts(data.data);
+      } else {
+        settopProducts([]);
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      settopProducts([]);
+    });
+}, []);
+
+useEffect(() => {
+  fetch("http://localhost:8000/popular_products/")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Fetched popular products:", data);
+
+      // ✅ Normalize response
+      if (Array.isArray(data)) {
+        setpopularProducts(data);
+      } else if (Array.isArray(data.popular_products)) {
+        setpopularProducts(data.popular_products);
+      } else if (Array.isArray(data.data)) {
+        setpopularProducts(data.data);
+      } else {
+        setpopularProducts([]);
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching popular data:", error);
+      setpopularProducts([]);
+    });
+}, []);
+=======
   useEffect(() => {
     fetch("http://localhost:8000/top_products/")
       .then((response) => response.json())
@@ -28,14 +75,21 @@ const Home = () => {
       console.error("Error fetching popular data:", error);
     });
   }, []);
+>>>>>>> cleanup-pycache
 
     return (
       <>
         <div className="top-banner">
           <div className="top-banner-content">
+<<<<<<< HEAD
+            <h1>Biggest New Year Sale</h1>
+            <p>This New Year get upto 80% discount on your favourite outfit.</p>
+            <div className="Limited_Time">*Limited time New Year offer</div>
+=======
             <h1>Biggest Diwali Sale</h1>
             <p>This diwali get upto 80% discount on your favourite outfit.</p>
             <div className="Limited_Time">*Limited time Diwali offer</div>
+>>>>>>> cleanup-pycache
             <a href="#top-products" className="shop-now-btn">
               Shop Now
             </a>
@@ -46,9 +100,16 @@ const Home = () => {
         <div className="product-card" id="top-products">
           <h1>Top Products</h1>
           <div className="product-list">
+<<<<<<< HEAD
+              {Array.isArray(topProducts) &&
+                topProducts.map((product) => (
+                  <ProductCard key={product.id} {...product} />
+              ))}
+=======
               {topProducts.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
+>>>>>>> cleanup-pycache
           </div>
         </div>
 
@@ -63,9 +124,16 @@ const Home = () => {
         <div className="product-card" id="popular-products">
           <h1>Popular Products</h1>
           <div className="product-list">
+<<<<<<< HEAD
+              {Array.isArray(popularProduct) &&
+                popularProduct.map((product) => (
+                  <ProductCard key={product.id} {...product} />
+              ))}
+=======
             {popularProduct.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
+>>>>>>> cleanup-pycache
           </div>
         </div>
 

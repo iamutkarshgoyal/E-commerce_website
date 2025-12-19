@@ -7,6 +7,11 @@ services:
       - .:/workspace
     ports:
       - "8000:8000"
+<<<<<<< HEAD
+    env_file:
+      - .env
+=======
+>>>>>>> cleanup-pycache
 
   frontend:
     build: ./Frontend
@@ -17,3 +22,8 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+<<<<<<< HEAD
+    command: npm start
+    
+=======
+>>>>>>> cleanup-pycache
