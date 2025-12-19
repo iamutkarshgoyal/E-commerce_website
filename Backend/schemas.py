@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+<<<<<<< HEAD
 from typing import Optional, List, Union
 
 class TopProductResponse(BaseModel):
@@ -82,3 +83,36 @@ class UpdateProduct(BaseModel):
     class Config: {
         "from_attributes": True
     }
+=======
+
+class TopProductResponse(BaseModel):
+    id: int
+    productDisplayName: str
+    gender: str
+    masterCategory: str
+    articleType: str
+    baseColour: str
+    year: int
+    season: str
+    subCategory: str
+    s3_image_url: str
+
+    class Config:
+        orm_mode = True 
+
+
+class PopularProductResponse(BaseModel):
+    id: int
+    productDisplayName: str
+    gender: str
+    masterCategory: str
+    articleType: str
+    baseColour: str
+    year: int
+    season: str
+    subCategory: str
+    s3_image_url: str
+
+    class Config:
+        orm_mode = True 
+>>>>>>> 68298c400 (Added optimized fastapi backend and orm)
