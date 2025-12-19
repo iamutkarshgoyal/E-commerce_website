@@ -8,7 +8,6 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
 
   // Add item to cart
-<<<<<<< HEAD
   const addToCart = (item) => {
   setCart((prev) => {
     const existing = prev.find(
@@ -26,9 +25,6 @@ export function CartProvider({ children }) {
     return [...prev, item];
   });
 };
-=======
-  const addToCart = (item) => setCart((prev) => [...prev, item]);
->>>>>>> cleanup-pycache
 
   // Remove item by id
   const removeFromCart = (id) =>
