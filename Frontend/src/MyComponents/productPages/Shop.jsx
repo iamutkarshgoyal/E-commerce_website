@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "./Product Card"; // ✅ Ensure filename matches
-import API_BASE_URL from "./config";
+import API_BASE_URL from "../../config";
 
 const Shop = ({ gender }) => {
   const [products, setProducts] = useState([]);
