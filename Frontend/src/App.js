@@ -18,7 +18,7 @@ import Shop from './MyComponents/productPages/Shop';
 import Shopcontext from './context/Shopcontext';
 import Signup from './MyComponents/loginPage/SignUp';
 import Login from './MyComponents/loginPage/Login';
-import Item from './MyComponents/productPages/Item';
+import ProductDisplay from './MyComponents/productPages/product';
 import ProductAdd from './MyComponents/dataProduct/productAdd';
 import ProductDelete from './MyComponents/dataProduct/productDelete';
 import ProductUpdate from './MyComponents/dataProduct/updateProduct';
@@ -46,8 +46,8 @@ function App() {
         <Route path="/Shop/:categoryName" element={<Shopcontext />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/products" element={<Item />} >
-        <Route path=':id' element={<Item/>}/> </Route>
+        <Route path="/products" element={<ProductDisplay />} >
+        <Route path=':id' element={<ProductDisplay/>}/> </Route>
         <Route path="/add_product" element={<ProductAdd />} />
         <Route path="/delete_product" element={<ProductDelete />} />
         <Route path="/update_product" element={<ProductUpdate />} />

@@ -8,7 +8,8 @@ class TopProductResponse(BaseModel):
     price : str
     details : str
     total_images : int
-    s3_image_url: str = None
+    availability: bool
+    images: List[str]
 
     class Config:{
         "from_attributes": True}
@@ -21,7 +22,8 @@ class PopularProductResponse(BaseModel):
     price : str
     details : str
     total_images : int
-    s3_image_url: str = None
+    availability: bool
+    images: List[str]
 
     class Config: {
         "from_attributes": True}
@@ -42,7 +44,8 @@ class AllProductResponse(BaseModel):
     price : str
     details : str
     total_images : int
-    s3_image_url: str
+    availability: bool
+    images: List[str]
 
     class Config: {
         "from_attributes": True}
@@ -65,6 +68,7 @@ class AddProduct(BaseModel):
     price : str
     details : str
     total_images : int
+    availability: bool
 
 
 class UpdateProduct(BaseModel):
@@ -73,6 +77,7 @@ class UpdateProduct(BaseModel):
     price : Optional[str]
     details : Optional[str]
     total_images : Optional[int]
+    availability: Optional[bool]
 
     class Config: {
         "from_attributes": True

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, BIGINT
+from sqlalchemy import Column, Integer, String, BIGINT, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from pydantic import BaseModel
 
@@ -23,6 +23,7 @@ class Top_products(Base):
     gender = Column(String)
     price = Column(String)
     details = Column(String)
+    availability = Column(Boolean)
     total_images = Column(Integer)
 
 
@@ -34,6 +35,7 @@ class Popular_products(Base):
     gender = Column(String)
     price = Column(String)
     details = Column(String)
+    availability = Column(Boolean)
     total_images = Column(Integer)
 
 
@@ -45,6 +47,7 @@ class All_products(Base):
     gender = Column(String)
     price = Column(String)
     details = Column(String)
+    availability = Column(Boolean)
     total_images = Column(Integer)
 
 
@@ -59,6 +62,7 @@ class AddProduct(BaseModel):
     gender: str
     price: str
     details: str
+    availability: bool
     total_images: int
 
     class Config: {

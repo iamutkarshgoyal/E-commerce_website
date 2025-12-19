@@ -42,7 +42,7 @@ export default function Header() {
           </ul>
 
           {/* Center Search Bar */}
-          <form className="d-flex" role="search">
+          {/* <form className="d-flex" role="search">
             <input
               className="form-control me-2"
               type="search"
@@ -52,7 +52,7 @@ export default function Header() {
             <button className="btn btn-outline-success" type="submit">
               Search
             </button>
-          </form>
+          </form> */}
 
           {/* Right-side links */}
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">

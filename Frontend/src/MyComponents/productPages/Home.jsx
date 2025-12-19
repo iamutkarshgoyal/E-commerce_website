@@ -5,29 +5,51 @@ const Home = () => {
   const [topProducts, settopProducts] = useState([]);
   const [popularProduct, setpopularProducts] = useState([]);
 
-  useEffect(() => {
-    fetch("http://localhost:8000/top_products/")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Fetched data:", data);
-        settopProducts(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    fetch("http://localhost:8000/popular_products/")
+useEffect(() => {
+  fetch("http://localhost:8000/top_products/")
     .then((response) => response.json())
     .then((data) => {
-      console.log("Fetched data:", data);
-      setpopularProducts(data);
+      console.log("Fetched top products:", data);
+
+      // ✅ Normalize response
+      if (Array.isArray(data)) {
+        settopProducts(data);
+      } else if (Array.isArray(data.top_products)) {
+        settopProducts(data.top_products);
+      } else if (Array.isArray(data.data)) {
+        settopProducts(data.data);
+      } else {
+        settopProducts([]);
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      settopProducts([]);
+    });
+}, []);
+
+useEffect(() => {
+  fetch("http://localhost:8000/popular_products/")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Fetched popular products:", data);
+
+      // ✅ Normalize response
+      if (Array.isArray(data)) {
+        setpopularProducts(data);
+      } else if (Array.isArray(data.popular_products)) {
+        setpopularProducts(data.popular_products);
+      } else if (Array.isArray(data.data)) {
+        setpopularProducts(data.data);
+      } else {
+        setpopularProducts([]);
+      }
     })
     .catch((error) => {
       console.error("Error fetching popular data:", error);
+      setpopularProducts([]);
     });
-  }, []);
+}, []);
 
     return (
       <>
@@ -46,9 +68,10 @@ const Home = () => {
         <div className="product-card" id="top-products">
           <h1>Top Products</h1>
           <div className="product-list">
-              {topProducts.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
+              {Array.isArray(topProducts) &&
+                topProducts.map((product) => (
+                  <ProductCard key={product.id} {...product} />
+              ))}
           </div>
         </div>
 
@@ -63,9 +86,10 @@ const Home = () => {
         <div className="product-card" id="popular-products">
           <h1>Popular Products</h1>
           <div className="product-list">
-            {popularProduct.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
+              {Array.isArray(popularProduct) &&
+                popularProduct.map((product) => (
+                  <ProductCard key={product.id} {...product} />
+              ))}
           </div>
         </div>
 

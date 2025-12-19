@@ -37,10 +37,14 @@ async def get_top_products(db: Session = Depends(get_db)):
         result = []
         for p in products:
             safe_name = p.product_name.replace(" ", "_")
-            image_url = s3.generate_presigned_url(
-                'get_object',
-                Params={'Bucket': "e-commerce-product-images-bucket", 'Key': f'images/{safe_name}_1.jpg'}, ExpiresIn=360000)
-
+            image_urls = []
+            for i in range(1, p.total_images + 1):
+                url = s3.generate_presigned_url(
+                    "get_object",
+                    Params={"Bucket": "e-commerce-product-images-bucket",
+                            "Key": f"images/{safe_name}_{i}.jpg"},
+                    ExpiresIn=360000)
+                image_urls.append(url)
             result.append({
                     "id": p.id,
                     "product_name": p.product_name,
@@ -48,7 +52,8 @@ async def get_top_products(db: Session = Depends(get_db)):
                     "price": p.price,
                     "details": p.details,
                     "total_images": p.total_images,
-                    "s3_image_url": image_url
+                    "availability": p.availability,
+                    "images": image_urls
                     })
 
         return result
@@ -66,9 +71,14 @@ async def get_top_products(db: Session = Depends(get_db)):
         try:
             for p in products:
                 safe_name = p.product_name.replace(" ", "_")
-                image_url = s3.generate_presigned_url(
-                    'get_object',
-                    Params={'Bucket': "e-commerce-product-images-bucket", 'Key': f'images/{safe_name}_1.jpg'}, ExpiresIn=360000)
+                image_urls = []
+                for i in range(1, p.total_images + 1):
+                    url = s3.generate_presigned_url(
+                        "get_object",
+                        Params={"Bucket": "e-commerce-product-images-bucket",
+                                "Key": f"images/{safe_name}_{i}.jpg"},
+                        ExpiresIn=360000)
+                    image_urls.append(url)
 
                 result.append({
                     "id": p.id,
@@ -77,7 +87,8 @@ async def get_top_products(db: Session = Depends(get_db)):
                     "price": p.price,
                     "details": p.details,
                     "total_images": p.total_images,
-                    "s3_image_url": image_url
+                    "availability": p.availability,
+                    "images": image_urls
                     })
                 
         except Exception as e:
@@ -104,11 +115,14 @@ async def get_products(db: Session = Depends(get_db), skip: int = 0,
         try:
             for p in products:
                 safe_name = p.product_name.replace(" ", "_")
-                image_url = s3.generate_presigned_url(
-                    'get_object',
-                    Params={'Bucket': "e-commerce-product-images-bucket",
-                            'Key': f'images/{safe_name}_1.jpg'}, ExpiresIn=360000)
-
+                image_urls = []
+                for i in range(1, p.total_images + 1):
+                    url = s3.generate_presigned_url(
+                        "get_object",
+                        Params={"Bucket": "e-commerce-product-images-bucket",
+                                "Key": f"images/{safe_name}_{i}.jpg"},
+                        ExpiresIn=360000)
+                    image_urls.append(url)
                 result.append({
                     "id": p.id,
                     "product_name": p.product_name,
@@ -116,7 +130,8 @@ async def get_products(db: Session = Depends(get_db), skip: int = 0,
                     "price": p.price,
                     "details": p.details,
                     "total_images": p.total_images,
-                    "s3_image_url": image_url
+                    "availability": p.availability,
+                    "images": image_urls
                     })
                 
         except Exception as e:
@@ -132,17 +147,22 @@ async def get_products(db: Session = Depends(get_db), skip: int = 0,
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/products/{id}/", response_model=TopProductResponse)
+@app.get("/products/{id}/", response_model=AllProductResponse)
 async def get_popular_products(id: int, db: Session = Depends(get_db)):
     try:
         product = db.query(models.All_products).filter(models.All_products.id == id).first()
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
         safe_name = product.product_name.replace(" ", "_")
-        s3_image_url = s3.generate_presigned_url(
-                                        'get_object',
-                                        Params={'Bucket': "e-commerce-product-images-bucket",
-                                                'Key': f'images/{safe_name}_1.jpg'}, ExpiresIn=360000)
+        image_urls = []
+        for i in range(1, product.total_images + 1):
+            url = s3.generate_presigned_url(
+                "get_object",
+                Params={"Bucket": "e-commerce-product-images-bucket",
+                        "Key": f"images/{safe_name}_{i}.jpg"},
+                ExpiresIn=360000)
+            image_urls.append(url)
+
         product_data = {
             "id": product.id,
             "product_name": product.product_name,
@@ -150,7 +170,8 @@ async def get_popular_products(id: int, db: Session = Depends(get_db)):
             "price": product.price,
             "details": product.details,
             "total_images": product.total_images,
-            "s3_image_url": s3_image_url
+            "availability": product.availability,
+            "images": image_urls
         }
         return product_data
     except:
@@ -200,6 +221,7 @@ async def add_product(product: AddProduct, db: Session = Depends(get_db)):
             gender = product.gender,
             price = product.price,
             details = product.details,
+            availability = product.availability,
             total_images = product.total_images
         )
         db.add(new_product)

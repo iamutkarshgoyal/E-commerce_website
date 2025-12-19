@@ -8,7 +8,23 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
 
   // Add item to cart
-  const addToCart = (item) => setCart((prev) => [...prev, item]);
+  const addToCart = (item) => {
+  setCart((prev) => {
+    const existing = prev.find(
+      (p) => p.id === item.id && p.size === item.size
+    );
+
+    if (existing) {
+      return prev.map((p) =>
+        p.id === item.id && p.size === item.size
+          ? { ...p, quantity: p.quantity + 1 }
+          : p
+      );
+    }
+
+    return [...prev, item];
+  });
+};
 
   // Remove item by id
   const removeFromCart = (id) =>
