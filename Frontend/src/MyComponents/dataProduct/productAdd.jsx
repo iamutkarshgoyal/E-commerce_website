@@ -2,12 +2,25 @@ import React, { useState } from "react";
 
 const ProductAdd = () => {
   const [addProduct, setAddProduct] = useState({
+<<<<<<< HEAD
     id:  "",
     product_name: "",
     gender: "",
     price: "",
     details: "",
     total_images: ""
+=======
+    id: "",
+    productDisplayName: "",
+    gender: "",
+    articleType: "",
+    baseColour: "",
+    masterCategory: "",
+    subCategory: "",
+    season: "",
+    year: "",
+    usage: "",
+>>>>>>> cleanup-pycache
   });
 
   const [loading, setLoading] = useState(false);
@@ -26,7 +39,11 @@ const ProductAdd = () => {
     setError(null);
 
     try {
+<<<<<<< HEAD
       const response = await fetch(`http://localhost:8000/add_product/`, {
+=======
+      const response = await fetch("http://localhost:8000/add_product/", {
+>>>>>>> cleanup-pycache
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(addProduct),
@@ -38,12 +55,25 @@ const ProductAdd = () => {
       console.log("✅ Product added successfully:", data);
 
       setAddProduct({
+<<<<<<< HEAD
         id:  "",
         product_name: "",
         gender: "",
         price: "",
         details: "",
         total_images: ""
+=======
+        id: "",
+        productDisplayName: "",
+        gender: "",
+        articleType: "",
+        baseColour: "",
+        masterCategory: "",
+        subCategory: "",
+        season: "",
+        year: "",
+        usage: "",
+>>>>>>> cleanup-pycache
       });
     } catch (err) {
       console.error("❌ Error adding product:", err);

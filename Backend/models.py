@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 from sqlalchemy import Column, Integer, String, BIGINT, Boolean
 =======
 from sqlalchemy import Column, Integer, String
 >>>>>>> 68298c400 (Added optimized fastapi backend and orm)
+=======
+from sqlalchemy import Column, Integer, String, BIGINT
+>>>>>>> cleanup-pycache
 from sqlalchemy.ext.declarative import declarative_base
 from pydantic import BaseModel
 
@@ -10,6 +14,9 @@ Base = declarative_base()
 
 class User(Base):
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> cleanup-pycache
     __tablename__ = "USERS"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -21,6 +28,7 @@ class User(Base):
 
 
 class Top_products(Base):
+<<<<<<< HEAD
     __tablename__ = "NEW_PRODUCT_TABLE"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -83,6 +91,8 @@ class AddProduct(BaseModel):
 
 
 class Top_products(Base):
+=======
+>>>>>>> cleanup-pycache
     __tablename__ = "TOP_PRODUCT_TABLE"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -112,6 +122,7 @@ class Popular_products(Base):
     usage = Column(String)
 
 
+<<<<<<< HEAD
 class UserCreate(BaseModel):
     username: str
     email: str
@@ -122,3 +133,37 @@ class UserLogin(BaseModel):
     username: str
     password: str
 >>>>>>> 68298c400 (Added optimized fastapi backend and orm)
+=======
+class All_products(Base):
+    __tablename__ = "ALL_DATA_TABLE"
+
+    id = Column(Integer, primary_key=True, index=True)
+    productDisplayName = Column(String)
+    gender = Column(String)
+    masterCategory = Column(String)
+    subCategory = Column(String)
+    articleType = Column(String)
+    baseColour = Column(String)
+    season = Column(String)
+    year = Column(String)
+    usage = Column(String)
+
+
+class UserLogin(BaseModel):
+    mobile: int
+    password: str
+
+
+class AddProduct(BaseModel):
+    productDisplayName: str
+    gender: str
+    masterCategory: str
+    subCategory: str
+    articleType: str
+    baseColour: str
+    season: str
+    year: str
+    usage: str
+    s3_image_url: str
+
+>>>>>>> cleanup-pycache
