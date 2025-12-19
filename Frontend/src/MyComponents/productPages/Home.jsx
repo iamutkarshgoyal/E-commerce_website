@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "./Product Card"; 
-import API_BASE_URL from "./config";
+import API_BASE_URL from "../../config";
 
 const Home = () => {
   const [topProducts, settopProducts] = useState([]);

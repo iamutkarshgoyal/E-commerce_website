@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import ProductCard from "./Product Card";
-import API_BASE_URL from "./config";
+import API_BASE_URL from "../../config";
 
 const ProductDisplay = () => {
   const { id } = useParams();
